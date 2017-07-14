@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  ftp-test:
+    container_name: ftp-test
+    working_dir: /app/ftp-test
+    build: .
+    command: ["stack", "build", "--exec", "ftp-test"]
+    volumes:
+      - ./:/app/ftp-test
+    tty: true

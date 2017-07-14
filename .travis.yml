@@ -1,0 +1,20 @@
+dist: trusty
+sudo: false
+services:
+  - docker
+env:
+  TRAVIS_BRANCH_CLEAN=$(sed 's/\//-/g' <<< $TRAVIS_BRANCH)
+  DOCKER_TAG="$TRAVIS_COMMIT.$TRAVIS_BRANCH_CLEAN"
+  APP_NAME=ftp-test
+script: |
+  set -e
+
+  docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  docker build --cache-from imageintelligence/$APP_NAME:latest \
+               --tag imageintelligence/$APP_NAME:$DOCKER_TAG \
+               --tag imageintelligence/$APP_NAME:latest .
+               
+  if [ $TRAVIS_BRANCH = 'master' ]; then
+    docker push imageintelligence/$APP_NAME:latest
+    docker push imageintelligence/$APP_NAME:$DOCKER_TAG
+  fi
